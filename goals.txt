@@ -1,0 +1,11 @@
+1. basic syntax
+2. reverse a string
+3. map over a list and convert to something else
+4. learn about dictionaries, how to manipulate them, access their keys, iterate etc
+
+...
+
+1. use boto3 to suck down a csv file from AWS and print the contents
+2. use pandas to join 2 csv files into a single data structure and print that
+3. create an AWS dynamo db table, access its contents
+
