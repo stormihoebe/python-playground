@@ -61,3 +61,6 @@ def returnPersonName(person):
     return person.get("name")
 
 print("Hello " + returnPersonName(stormi))
+
+the_keys = stormi.keys()
+print(the_keys)
