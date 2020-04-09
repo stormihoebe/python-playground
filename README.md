@@ -13,8 +13,11 @@
 
 ## Files 
 `./test.py` is working with python basics
+
 `./app.py` is using boto3, pandas, & dynamodb
+
 `./lambda/person_lambda.py` is a lambda function that takes 2 csv files from s3, combines them, manipulates the data, adds the data to a dynamodb table. Then requests an item from the table and returns the name of the first person
+
 `./lambda/zip.zip` is what actually got uploaded to aws lambda, it includes the python file as well as the dependencies (for the specific version/runtime aws uses) 
 
 the lambda function is triggered by this api gateway, which is currently returning an error 🙂 https://1901omd98b.execute-api.us-west-2.amazonaws.com/default/personFunction
