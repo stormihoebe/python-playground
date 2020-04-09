@@ -1,2 +1,6 @@
 /.venv
 /.idea
+/lambda/numpy*
+/lambda/pandas*
+/lambda/pytz*
+.history

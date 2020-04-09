@@ -1,89 +1,167 @@
-# 1. basic syntax
-# 2. reverse a string
+import boto3
+import pandas as pd
+
+## python: https://www.youtube.com/watch?v=_uQrJ0TkZlc
+## pandas: https://www.youtube.com/watch?v=vmEHCJofslg
+## boto3 overview: https://www.youtube.com/watch?v=JiASzk_bH5M
+## dynamodb: https://www.youtube.com/watch?v=Al1xwYhQ-BM
+## lambda & dynamodb https://www.youtube.com/watch?v=8zhv6GDSDE8
+## lambda functions & aws cli https://www.youtube.com/watch?v=Vdjt59dh0gs
+## lambda w/ dynamodb & s3 bucket in python https://www.youtube.com/watch?v=-8L4OxotXlE
+## how to use pandas in aws lambda https://www.youtube.com/watch?v=vf1m1ogKYrg
+## api gateway w/ lambda https://www.youtube.com/watch?v=uFsaiEhr1zs
+def my_lambda():
+    output = "X"
+
+    s3 = boto3.resource("s3")
+    # data = open('iamtest.txt', 'rb')
+    # s3.Bucket('py-playground').put_object(Key='test.txt', Body=data)
+    # s3.Object(bucket_name='py-playground', key='test.txt')
+
+    # 1. use boto3 to import csv file from AWS
+    bucket = "py-playground"
+    file_name = "pokemon_data.csv"
+    s3 = boto3.client("s3")
+    obj = s3.get_object(Bucket=bucket, Key=file_name)
+    # - convert to data frame
+    df = pd.read_csv(obj['Body'])
+    # - print then csv file contents
+    print(df)
+    cols = df.columns
+    print(cols)
+    names = df['Name'][0:5]
+    print(names)
+
+    select_cols = df[['Name', 'Type 1', 'Attack', 'Defense']]
+    print(select_cols)
+    # iterate
+    for index, row in df.iterrows():
+        print(index, row['Name'], row['Type 1'])
+
+    # filtering/locating based on params
+    fire_types = df.loc[df['Type 1'] == 'Fire']
+    print(len(fire_types))
+    print(df.describe())
+
+    # sorting
+    sorted_df = df.sort_values(['Type 1', 'HP'], ascending=[True, False])
+    print(sorted_df)
+
+    # add column totals
+    df["Total"] = df['HP'] + df['Attack'] + df['Defense'] + df['Sp. Atk'] + df['Sp. Def'] + df['Speed']
+    print(df)
+
+    # create csv
+    modified_file_name = 'pokemon_modified.csv'
+    new_file = df.to_csv(modified_file_name)
+    data = open(modified_file_name, 'rb')
+
+    # put new csv in s3 bucket
+    s3.put_object(Bucket=bucket, Key=modified_file_name, Body=data)
+
+    # - filter data frame down to columns
+
+    df.loc[df['Type 1'] == 'Fire', 'Type 1'] = "Fire Type"
+    df.loc[df['Generation'] == 1, 'Generation'] = "ONE"
+
+    print(df)
+
+    df.loc[df['Generation'] == 'ONE', 'Generation'] = 1
+    print(df)
+
+    # grouping & sorting data
+    print(df.groupby(['Type 1']).mean().sort_values('Attack', ascending=False))
+
+    # - change values of columns (multiply)
+    df["HP * Speed"] = df['HP'] * df['Speed']
+    print(df)
+
+    # 2. use pandas to join 2 csv files into a single data structure and print that
+    people_1_file_name = 'people1.csv'
+    people_2_file_name = 'people2.csv'
+    obj1 = s3.get_object(Bucket=bucket, Key=people_1_file_name)
+    obj2 = s3.get_object(Bucket=bucket, Key=people_2_file_name)
+
+    df1 = pd.read_csv(obj1['Body'])
+    df2 = pd.read_csv(obj2['Body'])
+    # combine data to one data frame
+    all_people_df = pd.concat([df1, df2])
+    all_people_df.reset_index(drop=True, inplace=True)
+    print(all_people_df)
+
+    # add year column
+    all_people_df['year'] = 2020 - all_people_df['age']
+    print(all_people_df)
+
+    # remove rows where name is Johny
+    to_delete = all_people_df[all_people_df['name'] == 'Johny'].index
+    all_people_df.drop(to_delete, inplace=True)
+    print(all_people_df)
+
+    #  save as new csv file
+    file_name = 'all_people.csv'
+    new_file = all_people_df.to_csv(file_name)
+    data = open(file_name, 'rb')
+
+    # put new csv in s3 bucket
+    s3.put_object(Bucket=bucket, Key=file_name, Body=data)
+
+    # later:
+    # 3. populate a AWS dynamo db table using pandas dataframe data, access its contents
+    # known scheme
+
+    db_resource = boto3.resource('dynamodb')
+    table_name = "People"
+    data_columns = all_people_df.columns
+    print(data_columns)
+
+    table_columns = ["Name", "Age"]
+
+    table = db_resource.Table(table_name)
+    data_columns = all_people_df.columns
+    print(data_columns)
 
 
-def str_reverse(s):
-    reversed_str = ""
-    for letter in s:
-        reversed_str = letter + reversed_str
-    return reversed_str
+    def build_item(row_data, ind):
+        person = {
+            "ID": ind,
+            "Name": row_data["name"],
+            "Age": row_data["age"]
+        }
+        return person
 
 
-name = "stormi"
+    # iterate
+    for index, row in all_people_df.iterrows():
+        row['name']
+        item = build_item(row, index)
+        table.put_item(
+            Item=item
+        )
 
-print(f"This is your name backwards: {str_reverse(name)}")
+    # 4. query dynamo db table to confirm same data
 
-# 3. map over a list and convert to something else
+    resp = table.get_item(
+        Key={'ID': 1}
+    )
 
+    print(resp['Item'])
 
-def find_total(num_list):
-    total = 0
-    for num in num_list:
-        total += num
-    return total
+    # create a lambda function that:
+    #   reads data from s3 bucket csv file
+    #   uses pandas to manipulate the data (multiply figures by 2?)
+    #   adds data to dynamodb table
 
+    # add test for lambda functions
 
-numbers = [3, 5, 7, 9]
+    # create a lambda function that
+    #   reads from dynamodb table by id
+    # returns the output of this function
 
-print(f"For Loop total: {find_total(numbers)}")
+    # install the lambda on aws
+    # attach a RESTful endpont to it... which i think its api gateway
+    
+    return output
 
-# 4. learn about dictionaries, how to manipulate them, access their keys, iterate etc
-
-# classes
-
-
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def say_hello(self):
-        print("Hello, I'm " + self.name)
-
-    def say_age(self):
-        print("I am " + str(self.age) + " years old.")
-
-
-stormi = Person("Stormi", 27)
-
-stormi.say_hello()
-stormi.say_age()
-
-# dictionaries
-book = {
-    "title": "The Great Gatsby",
-    "author": "F. Scott Fitzgerald",
-    "year": 1925,
-    "has_read": True
-}
-
-print(f"This book was written by {book['author']}.")
-if book["has_read"]:
-    print(f'I have read {book["title"]}')
-else:
-    print(f'I have never read {book["title"]}.')
-print(f"This book was written {2020 - book['year']} years ago.")
-
-book["in_stock"] = False
-
-if not book["in_stock"]:
-    print(f'{book["title"]} is not in stock.')
-else:
-    print(f'{book["title"]} is available.')
-
-
-def check_book_info(book_info):
-    book_keys = book_info.keys()
-    for key in book_keys:
-        print(f"I have info about '{key}'")
-        print(f"It's: {book_info[key]}")
-
-
-check_book_info(book)
-
-# ...
-#
-# 1. use boto3 to suck down a csv file from AWS and print the contents
-# 2. use pandas to join 2 csv files into a single data structure and print that
-# 3. create an AWS dynamo db table, access its contents
-
+x = my_lambda()
+print(x)
