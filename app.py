@@ -1,15 +1,6 @@
 import boto3
 import pandas as pd
 
-## python: https://www.youtube.com/watch?v=_uQrJ0TkZlc
-## pandas: https://www.youtube.com/watch?v=vmEHCJofslg
-## boto3 overview: https://www.youtube.com/watch?v=JiASzk_bH5M
-## dynamodb: https://www.youtube.com/watch?v=Al1xwYhQ-BM
-## lambda & dynamodb https://www.youtube.com/watch?v=8zhv6GDSDE8
-## lambda functions & aws cli https://www.youtube.com/watch?v=Vdjt59dh0gs
-## lambda w/ dynamodb & s3 bucket in python https://www.youtube.com/watch?v=-8L4OxotXlE
-## how to use pandas in aws lambda https://www.youtube.com/watch?v=vf1m1ogKYrg
-## api gateway w/ lambda https://www.youtube.com/watch?v=uFsaiEhr1zs
 def my_lambda():
     output = "X"
 
