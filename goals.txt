@@ -1,11 +1,24 @@
+Day 1
+
 1. basic syntax
 2. reverse a string
 3. map over a list and convert to something else
 4. learn about dictionaries, how to manipulate them, access their keys, iterate etc
+5. create functions
 
-...
+Day 2
 
-1. use boto3 to suck down a csv file from AWS and print the contents
+1. use boto3 to import a csv file from AWS and print the contents
 2. use pandas to join 2 csv files into a single data structure and print that
 3. create an AWS dynamo db table, access its contents
+4. add data from pandas dataframe to dynamo db table
+5. alter data in dynamo db table (create, edit, delete)
 
+Day 3
+
+6. move logic to access dynamo db table into a lambda
+7. connect lambda to api gateway to trigger lambda through curl & return response of lambda
+8. add additional lambdas / api gateway resources for CRUD functinality
+
+Day 4 
+9. add tests for lambda, mock data from aws

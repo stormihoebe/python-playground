@@ -4,3 +4,5 @@
 /lambda/pandas*
 /lambda/pytz*
 .history
+.DS_Store
+/.vscode

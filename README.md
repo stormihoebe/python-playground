@@ -9,7 +9,14 @@
 ### lambda functions & aws cli https://www.youtube.com/watch?v=Vdjt59dh0gs
 ### lambda w/ dynamodb & s3 bucket in python https://www.youtube.com/watch?v=-8L4OxotXlE
 ### how to use pandas in aws lambda https://www.youtube.com/watch?v=vf1m1ogKYrg
+- gotcha with using pandas in lambda - include numpy, pandas, pytz 
+- download files from from https://pypi.org/
+- choose these versions: `{module-name}-version-cp37-cp37m-manylinux1_x86_64.whl` because they are the only ones that will run in the lambda when deployed to aws
 ### api gateway w/ lambda https://www.youtube.com/watch?v=uFsaiEhr1zs
+- Gotcha with setting up api gateway: https://stackoverflow.com/questions/47624509/aws-error-proxy-integrations-cannot-be-configured-to-transform-responses
+
+### testing in python https://www.youtube.com/watch?v=6tNS--WetLI
+### testing lambdas with moto https://www.youtube.com/watch?v=11Fr0wqcxRc&t=381s
 
 ## Files 
 `./test.py` is working with python basics
