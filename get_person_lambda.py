@@ -1,11 +1,11 @@
 import boto3
 
 
-def lambda_handler(event, context):
+def lambda_handler(id=1):
     table = get_table("People")
-    resp = get_item_resp(table, 1)
+    resp = get_item_resp(table, id)
 
-    item = {'name': resp['Item']['Name']}
+    item = {'name': resp['Item']['Name'], 'id': id}
 
     output = {'statusCode': 200, 'body': item}
     print(output)
