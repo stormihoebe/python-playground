@@ -55,6 +55,6 @@ class TestPersonLambda(unittest.TestCase):
     @patch('get_person_lambda.get_table', return_value=setupObj["table"], autospec=True)
     @patch('get_person_lambda.get_item_resp', return_value=setupObj["resp"], autospec=True)
     def test_person_lambda(self, mock_get_table, mock_get_item_resp):
-        actual = get_person_lambda.lambda_handler({}, {})
-        expected = {'statusCode': 200, 'body': {'name': 'Ahnika'}}
+        actual = get_person_lambda.lambda_handler()
+        expected = {'statusCode': 200, 'body': {'name': 'Ahnika', 'id': 1}}
         self.assertEqual(expected, actual)
