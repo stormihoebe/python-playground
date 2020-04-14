@@ -22,3 +22,12 @@ Day 3
 
 Day 4 
 9. add tests for lambda, mock data from aws
+
+# database_manager.py
+# 1. read people from s3 bucket csv
+# 2. check dynamo db for person (by id)
+# - if new, add person
+# 3. check local db for person (by id)
+# - if new, add person
+# 4. return all entries in both databases
+# { dynamo_people: [], psql_people: []}
