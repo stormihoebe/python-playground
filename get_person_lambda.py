@@ -4,11 +4,12 @@ import boto3
 def lambda_handler(id=1):
     table = get_table("People")
     resp = get_item_resp(table, id)
-
-    item = {'name': resp['Item']['Name'], 'id': id}
-
-    output = {'statusCode': 200, 'body': item}
-    print(output)
+    item = resp.get("Item", None)
+    if item is None:
+        output = {'statusCode': 404}
+    else:
+        output = {'statusCode': 200, 'body': resp['Item']}
+        print(output)
 
     return output
 
